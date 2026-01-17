@@ -7,8 +7,8 @@ namespace GuessNumber.ConsoleApp
     {
         static void Main(string[] args)
         {
-            GameSettings gameSettings = new GameSettings(0, 100, 3);
-            Console.WriteLine(gameSettings.ToString());
+            
+            Console.WriteLine("game");
         }
     }
 }
