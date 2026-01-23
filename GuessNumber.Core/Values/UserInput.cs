@@ -1,21 +1,11 @@
 namespace GuessNumber.Core.Values;
 
-public class UserInput
+public abstract class UserInput
 {
-    public string UserInputString { get; init; }
-    public UserInputType UserInputType { get; init; }
-
-    public UserInput(string userInputString)
+    public string OriginalInput { get; init; }
+    
+    protected UserInput(string originalInput)
     {
-        UserInputString = userInputString;
-
-        if (userInputString == "y")
-        {
-            UserInputType = UserInputType.NewGame;
-        }
-        else
-        {
-            UserInputType = UserInputType.CloseGame;
-        }
+        OriginalInput = originalInput;
     }
 }

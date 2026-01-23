@@ -1,8 +1,7 @@
 using System.Runtime.CompilerServices;
 using GuessNumber.Core.Services;
+using GuessNumber.Core.States;
 using GuessNumber.Core.Values;
-
-namespace GuessNumber.Core.Enities;
 
 public class Game
 {

@@ -9,10 +9,18 @@ namespace GuessNumber.ConsoleApp
     {
         static void Main(string[] args)
         {
+            var inputService = new ConsoleUserInputService();
+            var outputService = new ConsoleUserOutputService();
+            
             GameController gameController = new GameController(
-                new InMemoryGameRepository(),
-                new GenerateNumberService(),
-                new ConsoleUserInputService());
+                new GameService(
+                    new InMemoryGameRepository(),
+                    new GenerateNumberService(),
+                    inputService,
+                    outputService, 
+                    new NumberValidator()), 
+                outputService,
+                inputService);
             
             Console.WriteLine("GuessNumber Game");
             gameController.StartGame(new GameSettings(0, 100, 5));
