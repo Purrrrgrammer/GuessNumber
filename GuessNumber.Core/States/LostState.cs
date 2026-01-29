@@ -2,13 +2,12 @@ using GuessNumber.Core.Services;
 
 namespace GuessNumber.Core.States;
 
-public class LostState : IGameState
+public class LostState(IUserOutputService userOutputService) : IGameState
 {
     public void Handle(IGameService gameService)
     {
-        var userOutPutService = gameService.UserOutputService;
         var message = "Вы проиграли";
-        userOutPutService.Show(message);
+        userOutputService.Show(message);
         gameService.ChangeState(null);
     }
 }

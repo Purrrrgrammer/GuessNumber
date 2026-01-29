@@ -1,12 +1,6 @@
 namespace GuessNumber.Core.Values;
 
-public sealed class UserNumberInput : UserInput
+public sealed class UserNumberInput(string originalInput, Number number) : UserInput(originalInput)
 {
-    public Number Number { get; init; }
-    
-    public UserNumberInput(string originalInput, Number number) : base(originalInput)
-    {
-        Number = number;
-    }
-
+    public Number Number { get; init; } = number;
 }

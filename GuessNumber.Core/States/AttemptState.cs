@@ -1,9 +1,14 @@
 using GuessNumber.Core.Services;
+using GuessNumber.Core.States.StatesFactory;
 using GuessNumber.Core.Values;
 
 namespace GuessNumber.Core.States;
 
-public class AttemptState : IGameState
+public class AttemptState(
+    IUserInputService userInputService,
+    IUserOutputService userOutputService,
+    INumberValidator numberValidator,
+    IGameStateFactory gameStateFactory) : IGameState
 {
     private static Dictionary<MoveResult, string> _messages = new Dictionary<MoveResult, string>()
     {
@@ -13,20 +18,18 @@ public class AttemptState : IGameState
         
     public void Handle(IGameService gameService)
     {
-        var userOutPutService = gameService.UserOutputService;
         var game = gameService.CurrentGame;
         var gameSettings = game.GameSettings;
-        var numberValidator = gameService.NumberValidator;
         
-        if (!gameService.UserInputService.TryGetUserNumberInput(out UserNumberInput userInputNumber))
+        if (!userInputService.TryGetUserNumberInput(out UserNumberInput userInputNumber))
         {
-            userOutPutService.Show("Неверно введено число");
+            userOutputService.Show("Неверно введено число");
             return;
         }
 
         if (!numberValidator.IsValid(userInputNumber.Number, gameSettings))
         {
-            userOutPutService.Show(
+            userOutputService.Show(
                 $"Вводимое число должно быть в диапазоне " +
                 $"от {gameSettings.FromNumber} до {gameSettings.ToNumber}.");
             return;
@@ -38,19 +41,19 @@ public class AttemptState : IGameState
         {
             var resultText = _messages[moveResult];
             var message = $"{resultText}. Угадайте число от {gameSettings.FromNumber} до {gameSettings.ToNumber}. Осталось попыток: {game.TriesCount}\"";
-            userOutPutService.Show(message);
+            userOutputService.Show(message);
             return;
         }
 
         if (moveResult == MoveResult.Loose)
         {
-            IGameState lost = new LostState();
+            IGameState lost = gameStateFactory.CreateLostState();
             gameService.ChangeState(lost);
         }
 
         if (moveResult == MoveResult.Win)
         {
-            IGameState won = new WonState();
+            IGameState won = gameStateFactory.CreateWonState();
             gameService.ChangeState(won);
         }
     }

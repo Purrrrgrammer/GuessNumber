@@ -1,11 +1,6 @@
 namespace GuessNumber.Core.Values;
 
-public abstract class UserInput
+public abstract class UserInput(string originalInput)
 {
-    public string OriginalInput { get; init; }
-    
-    protected UserInput(string originalInput)
-    {
-        OriginalInput = originalInput;
-    }
+    public string OriginalInput { get; init; } = originalInput;
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using GuessNumber.ConsoleApp.GameRepositories;
 using GuessNumber.Core.Services;
+using GuessNumber.Core.States.StatesFactory;
 using GuessNumber.Core.Values;
 
 namespace GuessNumber.ConsoleApp
@@ -11,14 +12,13 @@ namespace GuessNumber.ConsoleApp
         {
             var inputService = new ConsoleUserInputService();
             var outputService = new ConsoleUserOutputService();
+            var gameStateFactory = new GameStateFactory(new NumberValidator(), outputService, inputService);
             
             GameController gameController = new GameController(
                 new GameService(
                     new InMemoryGameRepository(),
                     new GenerateNumberService(),
-                    inputService,
-                    outputService, 
-                    new NumberValidator()), 
+                    gameStateFactory), 
                 outputService,
                 inputService);
             
