@@ -1,26 +1,29 @@
+using GuessNumber.Core.Entities;
 using GuessNumber.Core.Repositories;
 using GuessNumber.Core.Services;
 using GuessNumber.Core.Values;
 
 namespace GuessNumber.ConsoleApp.GameRepositories;
 
-public class InMemoryGameRepository : IGameRepository
+public class InMemoryGameRepository(IGenerateNumber numberGenerator) : IGameRepository
 {
-    private Dictionary<long, Game> _games = new Dictionary<long, Game>();
-
+    private readonly Dictionary<long, Game> _games = new();
+    private long _nextId = 1;
+    
     public Game GetGameById(long id)
     {
-        if(_games.TryGetValue(id, out Game game))
-        {
-            return game;
-        }
-        
-        throw new KeyNotFoundException($"User with ID {id} not found");
+        return _games.TryGetValue(id, out var game) 
+            ? game 
+            : throw new KeyNotFoundException($"Game with ID {id} not found");
     }
 
-    public Game AddNewGame(GameSettings gameSettings, IGenerateNumber generateNumberService)
+    public Game AddNewGame(GameSettings gameSettings)
     {
-        var newGame = new Game(_games.Count + 1, gameSettings, generateNumberService);
+        var id = _nextId++;
+        var newGame = new Game(
+            id, 
+            gameSettings, 
+            numberGenerator.GenerateNumber(gameSettings.FromNumber, gameSettings.ToNumber));
         _games.Add(newGame.Id, newGame);
         
         return newGame;
@@ -28,17 +31,16 @@ public class InMemoryGameRepository : IGameRepository
 
     public void DeleteGame(long id)
     {
-        if (!_games.ContainsKey(id))
-            throw new KeyNotFoundException($"User with ID {id} not found");
-
-        _games.Remove(id);
+        if (!_games.Remove(id))
+            throw new KeyNotFoundException($"Game with ID {id} not found");
     }
 
     public void SetTriesCount(long id, int triesCount)
     {
         if (!_games.ContainsKey(id))
-            throw new KeyNotFoundException($"User with ID {id} not found");
-
-        //_games[id].TriesCount = triesCount;
+            throw new KeyNotFoundException($"Game with ID {id} not found");
+        
+        // Заглушка для будущей реализации с БД
+        // В InMemory-репозитории не нужно сохранять попытки,
     }
 }

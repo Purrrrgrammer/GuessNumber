@@ -1,56 +1,55 @@
 namespace GuessNumber.Core.Values;
 
-public class Number
+public sealed class Number
 {
-    private long _guessNumber;
+    public long Value { get; }
 
-    public long Value
+    public Number(long value)
     {
-        get => _guessNumber;
-        init
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException($"{nameof(GuessNumber)} must be > 0");
-            
-            _guessNumber = value;
-        }
+        if (value < 0)
+            throw new ArgumentOutOfRangeException(
+                nameof(value), 
+                value, 
+                "Number must be non-negative");
+        
+        Value = value;
     }
     
-    public static bool operator ==(Number guessNumber1, Number guessNumber2)
+    public static bool operator ==(Number? left, Number? right)
     {
-        return guessNumber1.Value == guessNumber2.Value;
+        if (left is null) return right is null;
+        if (right is null) return false;
+        return left.Value == right.Value;
     }
     
-    public static bool operator !=(Number guessNumber1, Number guessNumber2)
+    public static bool operator !=(Number? left, Number? right)
     {
-        return guessNumber1.Value != guessNumber2.Value;
+        return !(left == right);
     }   
     
-    public static bool operator < (Number guessNumber1, Number guessNumber2)
+    public static bool operator < (Number left, Number right)
     {
-        return guessNumber1.Value < guessNumber2.Value;
+        return left.Value < right.Value;
     }
     
-    public static bool operator >(Number guessNumber1, Number guessNumber2)
+    public static bool operator >(Number left, Number right)
     {
-        return guessNumber1.Value > guessNumber2.Value;
+        return left.Value > right.Value;
     }
-    
-        
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((Number)obj);
     }
 
     public override int GetHashCode()
     {
-        return _guessNumber.GetHashCode();
+        return Value.GetHashCode();
     }
     
-    protected bool Equals(Number other)
+    private bool Equals(Number other)
     {
         return Value == other.Value;
     }

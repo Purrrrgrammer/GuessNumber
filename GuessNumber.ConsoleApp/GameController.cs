@@ -1,5 +1,3 @@
-using System.Net.Mime;
-using GuessNumber.Core.Repositories;
 using GuessNumber.Core.Services;
 using GuessNumber.Core.Values;
 
@@ -10,15 +8,17 @@ public class GameController(
     IUserOutputService userOutputService,
     IUserInputService userInputService)
 {
+    private const string PlayAgainMessage = "Хотите сыграть еще? y - да, другое - отказ";
+    
     public void StartGame(GameSettings gameSettings)
     {
         while (true)
         {
             gameService.StartNewGame(gameSettings);
-            userOutputService.Show("Хотите сыграть еще? y - да, другое - отказ");
-            var input = userInputService.GetUserYesNoInput();
+            userOutputService.Show(PlayAgainMessage);
+            var input = userInputService.GetConfirmationUserInput();
             
-            if(!input.Yes)
+            if(!input.IsConfirmed)
               break;  
         }
     }

@@ -11,10 +11,10 @@ public class GameSettings
         if (fromNumber < 0 || fromNumber >= toNumber)
         {
             throw new ArgumentException(
-                $"{nameof(fromNumber)} must be > 0 and < {nameof(toNumber)}");
+                $"{nameof(fromNumber)} must be >= 0 and < {nameof(toNumber)}");
         }
         
-        if (triesCount < 0)
+        if (triesCount <= 0)
         {
             throw new ArgumentException(
                 $"{nameof(triesCount)} must be > 0");
@@ -27,6 +27,6 @@ public class GameSettings
 
     public override string ToString()
     {
-        return $"game settings: numbers from {FromNumber} to {ToNumber}, tries count - {TriesCount}";
+        return $"Game settings: numbers from {FromNumber} to {ToNumber}, tries count - {TriesCount}";
     }
 }

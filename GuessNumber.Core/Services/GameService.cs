@@ -1,3 +1,4 @@
+using GuessNumber.Core.Entities;
 using GuessNumber.Core.Repositories;
 using GuessNumber.Core.States;
 using GuessNumber.Core.States.StatesFactory;
@@ -7,15 +8,14 @@ namespace GuessNumber.Core.Services;
 
 public sealed class GameService(
     IGameRepository gameRepository,
-    IGenerateNumber generateNumberService,
     IGameStateFactory gameStateFactory)
     : IGameService
 {
-    public Game CurrentGame { get; private set; }
+    public Game? CurrentGame { get; private set; }
 
-    private IGameState _gameState;
+    private IGameState? _gameState;
 
-    public void ChangeState(IGameState gameState)
+    public void ChangeState(IGameState? gameState)
     {
         _gameState = gameState;
     }
@@ -23,7 +23,8 @@ public sealed class GameService(
     public void StartNewGame(GameSettings gameSettings)
     {
         _gameState = gameStateFactory.CreateWelcomeState();
-        CurrentGame = gameRepository.AddNewGame(gameSettings, generateNumberService);
+        CurrentGame = gameRepository.AddNewGame(gameSettings) ??
+                      throw new InvalidOperationException("Failed to create game");
         
         while (_gameState != null)
         {

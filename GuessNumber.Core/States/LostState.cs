@@ -6,8 +6,7 @@ public class LostState(IUserOutputService userOutputService) : IGameState
 {
     public void Handle(IGameService gameService)
     {
-        var message = "Вы проиграли";
-        userOutputService.Show(message);
+        userOutputService.Show("Вы проиграли");
         gameService.ChangeState(null);
     }
 }

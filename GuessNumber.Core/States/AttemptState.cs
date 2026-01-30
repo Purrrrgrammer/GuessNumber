@@ -1,3 +1,4 @@
+using GuessNumber.Core.Entities;
 using GuessNumber.Core.Services;
 using GuessNumber.Core.States.StatesFactory;
 using GuessNumber.Core.Values;
@@ -10,7 +11,7 @@ public class AttemptState(
     INumberValidator numberValidator,
     IGameStateFactory gameStateFactory) : IGameState
 {
-    private static Dictionary<MoveResult, string> _messages = new Dictionary<MoveResult, string>()
+    private static readonly Dictionary<MoveResult, string> Messages = new()
     {
         { MoveResult.NumberGreater, "Загаданное число больше" },
         { MoveResult.NumberLess, "Загаданное число меньше" }
@@ -19,9 +20,15 @@ public class AttemptState(
     public void Handle(IGameService gameService)
     {
         var game = gameService.CurrentGame;
+
+        if (game is null)
+        {
+            throw new InvalidOperationException("AttemptState requires initialized game");
+        }
+        
         var gameSettings = game.GameSettings;
         
-        if (!userInputService.TryGetUserNumberInput(out UserNumberInput userInputNumber))
+        if (!userInputService.TryGetUserNumberInput(out var userInputNumber))
         {
             userOutputService.Show("Неверно введено число");
             return;
@@ -39,22 +46,24 @@ public class AttemptState(
         
         if (moveResult == MoveResult.NumberLess || moveResult == MoveResult.NumberGreater)
         {
-            var resultText = _messages[moveResult];
-            var message = $"{resultText}. Угадайте число от {gameSettings.FromNumber} до {gameSettings.ToNumber}. Осталось попыток: {game.TriesCount}\"";
+            var resultText = Messages[moveResult];
+            var message = $"{resultText}. " +
+                          $"Угадайте число от {gameSettings.FromNumber} до {gameSettings.ToNumber}. " +
+                          $"Осталось попыток: {game.TriesCount}\"";
             userOutputService.Show(message);
             return;
         }
 
         if (moveResult == MoveResult.Loose)
         {
-            IGameState lost = gameStateFactory.CreateLostState();
-            gameService.ChangeState(lost);
+            var lostState = gameStateFactory.CreateLostState();
+            gameService.ChangeState(lostState);
         }
 
         if (moveResult == MoveResult.Win)
         {
-            IGameState won = gameStateFactory.CreateWonState();
-            gameService.ChangeState(won);
+            var wonState = gameStateFactory.CreateWonState();
+            gameService.ChangeState(wonState);
         }
     }
 }

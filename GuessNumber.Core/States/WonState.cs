@@ -6,8 +6,7 @@ public class WonState(IUserOutputService userOutputService) : IGameState
 {
     public void Handle(IGameService gameService)
     {
-        var message = "Вы выиграли";
-        userOutputService.Show(message);
+        userOutputService.Show("Вы выиграли");
         gameService.ChangeState(null);
     }
 }

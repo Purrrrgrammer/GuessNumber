@@ -4,6 +4,6 @@ namespace GuessNumber.Core.Services;
 
 public interface IUserInputService
 {
-    bool TryGetUserNumberInput(out UserNumberInput userNumberInput);
-    UserYesNoInput GetUserYesNoInput();
+    bool TryGetUserNumberInput(out NumberUserInput? userNumberInput);
+    ConfirmationUserInput GetConfirmationUserInput();
 }

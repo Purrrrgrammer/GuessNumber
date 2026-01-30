@@ -10,20 +10,20 @@ namespace GuessNumber.ConsoleApp
     {
         static void Main(string[] args)
         {
+            var gameController = CreateGameController();
+            
+            Console.WriteLine("GuessNumber Game");
+            gameController.StartGame(new GameSettings(0, 100, 7));
+        }
+
+        private static GameController CreateGameController()
+        {
             var inputService = new ConsoleUserInputService();
             var outputService = new ConsoleUserOutputService();
             var gameStateFactory = new GameStateFactory(new NumberValidator(), outputService, inputService);
-            
-            GameController gameController = new GameController(
-                new GameService(
-                    new InMemoryGameRepository(),
-                    new GenerateNumberService(),
-                    gameStateFactory), 
-                outputService,
-                inputService);
-            
-            Console.WriteLine("GuessNumber Game");
-            gameController.StartGame(new GameSettings(0, 100, 5));
+            var repository = new InMemoryGameRepository(new GenerateNumberService());
+            var gameService = new GameService(repository, gameStateFactory);
+            return new GameController(gameService,  outputService, inputService);
         }
     }
 }

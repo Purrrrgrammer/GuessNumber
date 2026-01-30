@@ -1,4 +1,3 @@
-
 using GuessNumber.Core.Services;
 using GuessNumber.Core.States.StatesFactory;
 
@@ -11,10 +10,16 @@ public sealed class WelcomeGameState(
     public void Handle(IGameService gameService)
     {
         var game = gameService.CurrentGame;
+        
+        if (game is null)
+        {
+            throw new InvalidOperationException("WelcomeSate requires initialized game");
+        }
+        
         var gameSettings = game.GameSettings;
         var message = $"Игра началась. Угадайте число от {gameSettings.FromNumber} до {gameSettings.ToNumber}. Осталось попыток: {game.TriesCount}\"";
         userOutputService.Show(message);
-        IGameState attemptState = gameStateFactory.CreateAttemptState();
+        var attemptState = gameStateFactory.CreateAttemptState();
         gameService.ChangeState(attemptState);
     }
 }

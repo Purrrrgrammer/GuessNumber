@@ -5,19 +5,21 @@ namespace GuessNumber.ConsoleApp;
 
 internal sealed class ConsoleUserInputService : IUserInputService
 {
-    public bool TryGetUserNumberInput(out UserNumberInput userNumberInput)
+    public bool TryGetUserNumberInput(out NumberUserInput? userNumberInput)
     {
-        var input = Console.ReadLine();
         userNumberInput = null;
+        
         try
         {
+            var input = Console.ReadLine();
+
             if (long.TryParse(input, out var result))
             {
-                userNumberInput = new UserNumberInput(input, new Number(){ Value = result });
+                userNumberInput = new NumberUserInput(input, new Number(result));
                 return true;
             }
         }
-        catch (Exception e)
+        catch
         {
             return false;
         }
@@ -25,11 +27,18 @@ internal sealed class ConsoleUserInputService : IUserInputService
         return false;
     }
 
-    public UserYesNoInput GetUserYesNoInput()
+    public ConfirmationUserInput GetConfirmationUserInput()
     {
-        var input = Console.ReadLine();
-        bool yes = input.Equals("y", StringComparison.OrdinalIgnoreCase);
+        try
+        {
+            var input = Console.ReadLine();
+            var yes = !string.IsNullOrEmpty(input) && input.Equals("y", StringComparison.OrdinalIgnoreCase);
         
-        return new UserYesNoInput(input, yes);
+            return new ConfirmationUserInput(input, yes);
+        }
+        catch
+        {
+            return new ConfirmationUserInput(null, false);
+        }
     }
 }
